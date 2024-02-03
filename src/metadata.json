@@ -1,0 +1,8 @@
+{
+    "name": "Display Presets",
+    "description": "Configure presets for display layouts, resolutions, scale and refresh rate on Wayland. Switch easily between configured presets.",
+    "uuid": "display-presets@alexdemb.github.com",
+    "url": "https://github.com/alexdemb/display-presets",
+    "settings-schema": "org.gnome.shell.extensions.display-presets",
+    "shell-version": ["45"]
+}

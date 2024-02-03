@@ -1,0 +1,27 @@
+{
+  "name": "display-presets",
+  "version": "0.0.1",
+  "description": "GNOME Shell extensions to create display presets on Wayland",
+  "type": "module",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexdemb/display-presets"
+  },
+  "author": "Oleksandr Dembinskyi <alexander.dembinsky@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/alexdemb/display-presets/issues"
+  },
+  "homepage": "https://github.com/alexdemb/display-presets#readme",
+  "sideEffects": false,
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-plugin-jsdoc": "^48.0.4",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@girs/gjs": "^3.2.7",
+    "@girs/gnome-shell": "^45.0.0-beta8"
+  }
+}
