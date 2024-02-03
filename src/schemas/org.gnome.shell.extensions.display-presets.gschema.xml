@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.display-presets" path="/org/gnome/shell/extensions/display-presets/">
+    <key name="show-icon" type="b">
+      <default>true</default>
+      <summary>Show icon</summary>
+      <description>Show icon on the bar</description>
+    </key>
+  </schema>
+</schemalist>
