@@ -12,6 +12,7 @@
   },
   "include": [
     "ambient.d.ts",
+    "lib/**/*"
   ],
   "files": [
     "extension.ts",
