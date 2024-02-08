@@ -25,7 +25,7 @@ export class SaveCurrentDialog extends ModalDialog {
     }
 
     constructor() {
-        super({destroyOnClose: true});
+        super({ destroyOnClose: true, shouldFadeIn: true, shouldFadeOut: true });
 
         this.setButtons([
             {
@@ -42,10 +42,12 @@ export class SaveCurrentDialog extends ModalDialog {
         ]);
 
         
-        const box = new St.BoxLayout({ vertical: true });
+        const box = new St.BoxLayout({ vertical: true, canFocus: true });
 
-        this._input = new St.Entry();
+        this._input = new St.Entry({ canFocus: true });
+        this._input.minWidth = 500;
         this._input.bind_property("text", this, "presetName", GObject.BindingFlags.BIDIRECTIONAL);
+        this._input.grab_key_focus();
 
         box.add_child(new St.Label({text: "Preset Name:"}));
         box.add_child(this._input);
