@@ -17,16 +17,18 @@ export default class DisplayPresetsExtension extends Extension {
     this.gsettings = this.getSettings();
     this.displayConfig = new DisplayConfig();
 
-    const presets = loadPresetsConfig();
 
     this.indicator = new DisplayPresetsIndicator();
     this.indicator.connect("activated::preferences", () => this.openPreferences());
     this.indicator.connect("activated::save-current-config", () => this._onSaveCurrentConfig());
     this.indicator.connect("activated-preset", (_, name) => this._activatePreset(name));
-    this.indicator.updateItems(presets);
 
     Main.panel.addToStatusArea(this.uuid, this.indicator);
     this.dbusOwnerId = DBusService.start(this.displayConfig);
+
+    loadPresetsConfig()
+      .then(presets => this.indicator?.updateItems(presets))
+      .catch((e) => console.log("Error loading presets: " + e));
   }
 
   _onSaveCurrentConfig() {
@@ -42,7 +44,7 @@ export default class DisplayPresetsExtension extends Extension {
   }
 
   async _activatePreset(presetName: string) {
-    const presets = loadPresetsConfig();
+    const presets = await loadPresetsConfig();
     const preset = this._findPreset(presets, presetName);
 
     console.log(`Activating preset: ${preset?.name}`);
@@ -63,7 +65,7 @@ export default class DisplayPresetsExtension extends Extension {
   async _saveCurrentConfig(presetName: string) {
     console.log(`Saving current preset with name '${presetName}'`);
     
-    const presets = loadPresetsConfig();
+    const presets = await loadPresetsConfig();
     const config = await this.displayConfig?.getCurrentState();
 
     if (config) {
@@ -82,6 +84,10 @@ export default class DisplayPresetsExtension extends Extension {
   }
 
   disable() {
+    if (this.indicator) {
+      this.indicator.destroy();
+    }
+
     if (this.dbusOwnerId) {
       DBusService.stop(this.dbusOwnerId);
       this.dbusOwnerId = undefined;
