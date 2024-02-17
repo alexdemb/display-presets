@@ -8,7 +8,7 @@ export class DisplayPresetsIndicator extends PanelMenu.Button {
     _icon: St.Icon;
     _preferencesItem: PopupMenuItem;
     _saveCurrentItem: PopupMenuItem;
-    _presetsSubMenu: PopupSubMenuMenuItem;
+    _presetsSubMenu?: PopupSubMenuMenuItem;
 
     static {
         GObject.registerClass({
@@ -35,18 +35,24 @@ export class DisplayPresetsIndicator extends PanelMenu.Button {
 
         this.add_child(this._icon);
 
-        this._presetsSubMenu = new PopupSubMenuMenuItem("");
-        this._presetsSubMenu.label.set_text("Presets");
-
         this._saveCurrentItem = new PopupMenuItem("Save display configuration");
         this._saveCurrentItem.connect("activate", () => this.emit("activated::save-current-config"));
 
         this._preferencesItem = new PopupMenuItem("Preferences");
         this._preferencesItem.connect("activate", () => this.emit("activated::preferences"));
+
+        this.menu.addMenuItem(new PopupSeparatorMenuItem());
+        this.menu.addMenuItem(this._saveCurrentItem);
+        this.menu.addMenuItem(this._preferencesItem);
     }
 
     updateItems(presets: Preset[]): void {
-        this._presetsSubMenu.menu.removeAll();
+        if (this._presetsSubMenu) {
+            this._presetsSubMenu.destroy();
+        }
+
+        this._presetsSubMenu = new PopupSubMenuMenuItem("");
+        this._presetsSubMenu.label.set_text("Presets");
 
         for (const preset of presets) {
             const item = new PopupMenuItem(preset.name);
@@ -55,10 +61,7 @@ export class DisplayPresetsIndicator extends PanelMenu.Button {
             this._presetsSubMenu.menu.addMenuItem(item);
         }
 
-        this.menu.addMenuItem(this._presetsSubMenu);
-        this.menu.addMenuItem(new PopupSeparatorMenuItem());
-        this.menu.addMenuItem(this._saveCurrentItem);
-        this.menu.addMenuItem(this._preferencesItem);
+        this.menu.addMenuItem(this._presetsSubMenu, 0);
     }
 
 };

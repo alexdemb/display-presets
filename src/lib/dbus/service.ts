@@ -24,7 +24,7 @@ class Service {
     }
     
     async ApplyPreset(presetName: string): Promise<void> {
-        const presets = loadPresetsConfig();
+        const presets = await loadPresetsConfig();
         const preset = presets.find(p => p.name === presetName);
 
         if (preset) {
@@ -68,5 +68,6 @@ export const start = (displayConfig: DisplayConfig) => {
 };
 
 export const stop = (ownerId: number) => {
+    serviceObj.dbus.unexport();
     Gio.bus_unown_name(ownerId);
 }
