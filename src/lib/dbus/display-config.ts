@@ -55,19 +55,19 @@ export enum Transform {
     ROTATE_270_FLIPPED = 7,
 };
 
+export const initDbusProxy = async (): Promise<Gio.DBusProxy> => {
+    return new Promise<Gio.DBusProxy>((resolve, reject) => {
+        Gio.DBusProxy.new_for_bus(Gio.BusType.SESSION, Gio.DBusProxyFlags.NONE, null, NAME, OBJECT_PATH, INTERFACE, null, (proxy, res, data) => {
+            resolve(proxy);
+        });
+    });
+}
+
 export class DisplayConfig {
     proxy: Gio.DBusProxy;
 
-    constructor() {
-        this.proxy = Gio.DBusProxy.new_for_bus_sync(
-            Gio.BusType.SESSION,
-            Gio.DBusProxyFlags.NONE,
-            null,
-            NAME,
-            OBJECT_PATH,
-            INTERFACE,
-            null
-        );
+    constructor(proxy: Gio.DBusProxy) {
+        this.proxy = proxy;
     }
 
     async getCurrentState(): Promise<Configuration> {
