@@ -109,7 +109,7 @@ export class DisplayConfig {
     _configurationToApplyMonitorConfigRequest(current_serial: number, config: Configuration): GLib.Variant {
         const logicalMonitors = config.logicalMonitors.map(lm => this._toLogicalMonitorRequest(config, lm));       
         const properties = {}
-        const requestStructure = [current_serial, 2, logicalMonitors, properties];
+        const requestStructure = [current_serial, 1, logicalMonitors, properties];
 
         console.log(`Request structure: ${JSON.stringify(requestStructure)}`);
 
