@@ -8,6 +8,7 @@ export class DisplayPresetsIndicator extends PanelMenu.Button {
     _icon: St.Icon;
     _preferencesItem: PopupMenuItem;
     _saveCurrentItem: PopupMenuItem;
+    _openConfigFileItem: PopupMenuItem;
     _presetsSubMenu?: PopupSubMenuMenuItem;
 
     static {
@@ -38,11 +39,15 @@ export class DisplayPresetsIndicator extends PanelMenu.Button {
         this._saveCurrentItem = new PopupMenuItem("Save display configuration");
         this._saveCurrentItem.connect("activate", () => this.emit("activated::save-current-config"));
 
+        this._openConfigFileItem = new PopupMenuItem("Open configuration file");
+        this._openConfigFileItem.connect("activate", () => this.emit("activated::open-config-file"));
+
         this._preferencesItem = new PopupMenuItem("Preferences");
         this._preferencesItem.connect("activate", () => this.emit("activated::preferences"));
 
         this.menu.addMenuItem(new PopupSeparatorMenuItem());
         this.menu.addMenuItem(this._saveCurrentItem);
+        this.menu.addMenuItem(this._openConfigFileItem);
         this.menu.addMenuItem(this._preferencesItem);
     }
 

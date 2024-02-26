@@ -6,5 +6,10 @@
       <summary>Show icon</summary>
       <description>Show icon on the bar</description>
     </key>
+    <key name="persistent-config" type="b">
+      <default>false</default>
+      <summary>Persistent configuration</summary>
+      <description>Persist configuration after applying preset</description>
+    </key>
   </schema>
 </schemalist>
