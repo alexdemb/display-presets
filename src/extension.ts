@@ -1,4 +1,5 @@
 import Gio from "gi://Gio";
+import GLib from "gi://GLib";
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 import { DisplayPresetsIndicator } from "./lib/ui/indicator.js";
@@ -12,21 +13,43 @@ export default class DisplayPresetsExtension extends Extension {
   indicator?: DisplayPresetsIndicator;
   displayConfig?: DisplayConfig;
   dbusOwnerId?: number;
+  showIconCallbackId? : number;
 
   async enable() {
     this.gsettings = this.getSettings();
 
+    const dbusProxy = await initDbusProxy();
+    this.displayConfig = new DisplayConfig(dbusProxy, this.gsettings);
+
+    this.dbusOwnerId = DBusService.start(this.displayConfig);
+
+    this.showIconCallbackId = this.gsettings.connect("changed::show-icon", () => {
+      this._refreshIndicator();
+    });
+    
+    this._refreshIndicator();
+  }
+
+  _refreshIndicator() {
+    this._toggleIndicator(this.gsettings?.get_boolean("show-icon") ?? false);
+  }
+
+  _toggleIndicator(enabled: boolean) {
+    if (enabled) {
+      this._enableIndicator();
+    } else {
+      this._disableIndicator();
+    }
+  }
+
+  async _enableIndicator() {
     this.indicator = new DisplayPresetsIndicator();
     this.indicator.connect("activated::preferences", () => this.openPreferences());
     this.indicator.connect("activated::save-current-config", () => this._onSaveCurrentConfig());
+    this.indicator.connect("activated::open-config-file", () => this._onOpenConfigFile());
     this.indicator.connect("activated-preset", (_, name) => this._activatePreset(name));
 
     Main.panel.addToStatusArea(this.uuid, this.indicator);
-
-    const dbusProxy = await initDbusProxy();
-    this.displayConfig = new DisplayConfig(dbusProxy);
-
-    this.dbusOwnerId = DBusService.start(this.displayConfig);
 
     try {
       const presets = await loadPresetsConfig()
@@ -36,11 +59,26 @@ export default class DisplayPresetsExtension extends Extension {
     }
   }
 
+  _disableIndicator() {
+    if (this.indicator) {
+      this.indicator.destroy();
+    }
+  }
+
   _onSaveCurrentConfig() {
     const dialog = new SaveCurrentDialog();
 
     if (dialog.open(global.get_current_time(), true)) {
       dialog.connect("confirmed", () => this._saveCurrentConfig(dialog.presetName));
+    }
+  }
+
+  async _onOpenConfigFile() {
+    try {
+      console.log("Opening configuration file")
+      Gio.Subprocess.new(["xdg-open", `${GLib.getenv("HOME")}/.config/display-presets.json`], Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE);
+    } catch (e) {
+      logError(e);
     }
   }
 
@@ -89,9 +127,11 @@ export default class DisplayPresetsExtension extends Extension {
   }
 
   disable() {
-    if (this.indicator) {
-      this.indicator.destroy();
+    if (this.showIconCallbackId) {
+      this.gsettings?.disconnect(this.showIconCallbackId);
     }
+
+    this._disableIndicator();
 
     if (this.dbusOwnerId) {
       DBusService.stop(this.dbusOwnerId);

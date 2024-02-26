@@ -65,9 +65,11 @@ export const initDbusProxy = async (): Promise<Gio.DBusProxy> => {
 
 export class DisplayConfig {
     proxy: Gio.DBusProxy;
+    gsettings: Gio.Settings
 
-    constructor(proxy: Gio.DBusProxy) {
+    constructor(proxy: Gio.DBusProxy, gsettings: Gio.Settings) {
         this.proxy = proxy;
+        this.gsettings = gsettings;
     }
 
     async getCurrentState(): Promise<Configuration> {
@@ -109,7 +111,8 @@ export class DisplayConfig {
     _configurationToApplyMonitorConfigRequest(current_serial: number, config: Configuration): GLib.Variant {
         const logicalMonitors = config.logicalMonitors.map(lm => this._toLogicalMonitorRequest(config, lm));       
         const properties = {}
-        const requestStructure = [current_serial, 1, logicalMonitors, properties];
+        const mode = this.gsettings.get_boolean("persistent-config") ? 2 : 1;
+        const requestStructure = [current_serial, mode, logicalMonitors, properties];
 
         console.log(`Request structure: ${JSON.stringify(requestStructure)}`);
 
