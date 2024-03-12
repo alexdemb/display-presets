@@ -102,7 +102,7 @@ export class SaveCurrentDialog extends ModalDialog {
            return [false, "Preset name should start with letter"];
         }
 
-        if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(text)) {
+        if (!/^[A-Za-z][A-Za-z0-9_-\s]*$/.test(text)) {
            return [false, "Preset name can have letters, digits, '-' and '_' symbols"];
         }
 
