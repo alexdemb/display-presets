@@ -65,8 +65,9 @@ export default class DisplayPresetsExtension extends Extension {
     }
   }
 
-  _onSaveCurrentConfig() {
-    const dialog = new SaveCurrentDialog();
+  async _onSaveCurrentConfig() {
+    const presets = await loadPresetsConfig();
+    const dialog = new SaveCurrentDialog(presets);
 
     if (dialog.open(global.get_current_time(), true)) {
       dialog.connect("confirmed", () => this._saveCurrentConfig(dialog.presetName));
