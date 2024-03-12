@@ -1,0 +1,32 @@
+.preset-name-label {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.preset-validation-label {
+    color: red;
+    margin-bottom: 6px;
+}
+
+.preset-name-input {
+    margin-bottom: 6px;
+}
+
+.preset-name-input-valid {
+    margin-bottom: 6px;
+    border: 1px solid transparent;
+}
+
+.preset-name-input-invalid {
+    margin-bottom: 6px;
+    border: 1px solid red;
+}
+
+.preset-existing-item {
+    padding: 6px 0px 6px 0px;
+    margin: 1px;
+}
+
+.preset-existing-item:hover {
+    padding-left: 4px;
+}
